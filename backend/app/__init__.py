@@ -1,0 +1,1 @@
+"""Minologue Backend Application"""
