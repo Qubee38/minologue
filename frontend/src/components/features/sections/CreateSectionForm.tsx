@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 
 interface CreateSectionFormProps {
-  fieldId: number;
+  fieldId: string;
   onClose: () => void;
 }
 

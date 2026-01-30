@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
+from uuid import UUID
 from app.api.deps import get_db, get_current_active_user, check_field_admin
 from app.crud.crud_field import crud_field
 from app.schemas.field import FieldCreate, FieldUpdate, FieldResponse
@@ -32,7 +33,7 @@ async def create_field(
 
 @router.get("/{field_id}", response_model=FieldResponse)
 async def get_field(
-    field_id: int,
+    field_id: UUID,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
 ):
@@ -48,7 +49,7 @@ async def get_field(
 
 @router.put("/{field_id}", response_model=FieldResponse)
 async def update_field(
-    field_id: int,
+    field_id: UUID,
     field_in: FieldUpdate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
@@ -63,7 +64,7 @@ async def update_field(
 
 @router.delete("/{field_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_field(
-    field_id: int,
+    field_id: UUID,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
 ):

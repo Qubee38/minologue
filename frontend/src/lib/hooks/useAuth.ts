@@ -39,8 +39,10 @@ export function useAuth() {
   const registerMutation = useMutation({
     mutationFn: (data: RegisterData) => authAPI.register(data),
     onSuccess: (data) => {
-      setUser(data.user);
-      router.push('/fields');
+      if (data.user) {
+        setUser(data.user);
+        router.push('/fields');
+      }
     },
   });
 
@@ -49,8 +51,10 @@ export function useAuth() {
     mutationFn: ({ email, password }: { email: string; password: string }) =>
       authAPI.login(email, password),
     onSuccess: (data) => {
-      setUser(data.user);
-      router.push('/fields');
+      if (data.user) {
+        setUser(data.user);
+        router.push('/fields');
+      }
     },
   });
 

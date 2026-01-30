@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useSectionRecords } from '@/lib/hooks/useRecords';
 import { Button } from '@/components/ui/Button';
@@ -12,15 +12,26 @@ import { WorkRecord } from '@/types';
 export default function SectionRecordsPage() {
   const params = useParams();
   const router = useRouter();
-  const sectionId = Number(params.id);
+  const sectionId = params.id as string;
   
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [dateString, setDateString] = useState('');
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [selectedWorkType, setSelectedWorkType] = useState('');
   const [selectedStartTime, setSelectedStartTime] = useState('09:00');
   const [selectedRecord, setSelectedRecord] = useState<WorkRecord | null>(null);
   const [showMenu, setShowMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  
+  // クライアントサイドでのみ日付をフォーマット（Hydrationエラー対策）
+  useEffect(() => {
+    setDateString(currentDate.toLocaleDateString('ja-JP', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      weekday: 'short',
+    }));
+  }, [currentDate]);
   
   const dateStr = currentDate.toISOString().split('T')[0];
   const { records, isLoading, error } = useSectionRecords(sectionId, {
@@ -156,7 +167,7 @@ export default function SectionRecordsPage() {
                 setShowMenu(false);
               }}
             >
-              <span className="text-xl">📝</span>
+              <span className="text-xl">📍</span>
               <span>区画詳細</span>
             </button>
             <button
@@ -209,12 +220,7 @@ export default function SectionRecordsPage() {
                 ‹
               </button>
               <div className="font-semibold cursor-pointer hover:bg-gray-100 px-3 py-2 rounded">
-                {currentDate.toLocaleDateString('ja-JP', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                  weekday: 'short',
-                })}
+                {dateString || '読み込み中...'}
               </div>
               <button
                 className="text-2xl hover:bg-gray-100 p-2 rounded"

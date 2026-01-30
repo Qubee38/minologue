@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
+from uuid import UUID
 from app.api.deps import get_db, get_current_active_user, check_field_admin, check_field_access
 from app.crud.crud_section import crud_section
 from app.crud.crud_field import crud_field
@@ -12,7 +13,7 @@ router = APIRouter()
 
 @router.get("/fields/{field_id}/sections", response_model=List[SectionResponse])
 async def get_sections(
-    field_id: int,
+    field_id: UUID,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
 ):
@@ -24,7 +25,7 @@ async def get_sections(
 
 @router.post("/fields/{field_id}/sections", response_model=SectionResponse, status_code=status.HTTP_201_CREATED)
 async def create_section(
-    field_id: int,
+    field_id: UUID,
     section_in: SectionCreate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
@@ -37,7 +38,7 @@ async def create_section(
 
 @router.get("/sections/{section_id}", response_model=SectionResponse)
 async def get_section(
-    section_id: int,
+    section_id: UUID,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
 ):
@@ -55,7 +56,7 @@ async def get_section(
 
 @router.put("/sections/{section_id}", response_model=SectionResponse)
 async def update_section(
-    section_id: int,
+    section_id: UUID,
     section_in: SectionUpdate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
@@ -75,7 +76,7 @@ async def update_section(
 
 @router.delete("/sections/{section_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_section(
-    section_id: int,
+    section_id: UUID,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
 ):

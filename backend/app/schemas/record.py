@@ -1,60 +1,60 @@
 from pydantic import BaseModel
-from typing import Optional, Literal, List
 from datetime import date, time, datetime
+from uuid import UUID
 
 
-class RecordBase(BaseModel):
-    """作業記録基底スキーマ"""
-    record_target: Literal["section", "field"] = "section"
+class WorkRecordBase(BaseModel):
     work_date: date
     start_time: time
     end_time: time
     work_type: str
-    custom_work_name: Optional[str] = None
-    quantity: Optional[float] = None
-    quantity_unit: Optional[str] = None
-    memo: Optional[str] = None
+    custom_work_name: str | None = None
+    quantity: float | None = None
+    quantity_unit: str | None = None
+    memo: str | None = None
+    record_target: str = "section"
 
 
-class RecordCreate(RecordBase):
-    """作業記録作成"""
+class WorkRecordCreate(WorkRecordBase):
     pass
 
 
-class RecordUpdate(BaseModel):
-    """作業記録更新"""
-    work_date: Optional[date] = None
-    start_time: Optional[time] = None
-    end_time: Optional[time] = None
-    work_type: Optional[str] = None
-    custom_work_name: Optional[str] = None
-    quantity: Optional[float] = None
-    quantity_unit: Optional[str] = None
-    memo: Optional[str] = None
+class WorkRecordUpdate(WorkRecordBase):
+    work_date: date | None = None
+    start_time: time | None = None
+    end_time: time | None = None
+    work_type: str | None = None
 
 
 class PhotoResponse(BaseModel):
-    """写真レスポンス"""
-    id: int
+    id: UUID
     file_path: str
     file_size: int
     display_order: int
     created_at: datetime
-    
+
     class Config:
         from_attributes = True
 
 
-class RecordResponse(RecordBase):
-    """作業記録レスポンス"""
-    id: int
-    field_id: int
-    section_id: Optional[int] = None
-    recorder_user_id: int
-    photos: List[PhotoResponse] = []
+class RecordResponse(WorkRecordBase):
+    id: UUID
+    field_id: UUID
+    section_id: UUID | None
+    recorder_user_id: UUID
+    photos: list[PhotoResponse] = []
     is_deleted: bool
     created_at: datetime
     updated_at: datetime
-    
+
     class Config:
         from_attributes = True
+
+
+class WorkRecord(RecordResponse):
+    pass
+
+
+# 後方互換性のためのエイリアス
+RecordCreate = WorkRecordCreate
+RecordUpdate = WorkRecordUpdate

@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
+from uuid import UUID
 from app.api.deps import get_db, get_current_active_user, check_field_admin
 from app.crud import crud_share, crud_user
 from app.schemas.share import ShareCreate, ShareResponse
@@ -21,7 +22,7 @@ async def get_my_invitations(
 
 @router.get("/fields/{field_id}/shares", response_model=List[ShareResponse])
 async def get_field_shares(
-    field_id: int,
+    field_id: UUID,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
 ):
@@ -33,7 +34,7 @@ async def get_field_shares(
 
 @router.post("/fields/{field_id}/shares", response_model=ShareResponse, status_code=status.HTTP_201_CREATED)
 async def create_share(
-    field_id: int,
+    field_id: UUID,
     share_in: ShareCreate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
@@ -73,7 +74,7 @@ async def create_share(
 
 @router.patch("/shares/{share_id}/approve", response_model=ShareResponse)
 async def approve_share(
-    share_id: int,
+    share_id: UUID,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
 ):
@@ -97,7 +98,7 @@ async def approve_share(
 
 @router.patch("/shares/{share_id}/reject", response_model=ShareResponse)
 async def reject_share(
-    share_id: int,
+    share_id: UUID,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
 ):
@@ -121,7 +122,7 @@ async def reject_share(
 
 @router.delete("/shares/{share_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_share(
-    share_id: int,
+    share_id: UUID,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
 ):

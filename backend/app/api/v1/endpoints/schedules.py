@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
+from uuid import UUID
 from app.api.deps import get_db, get_current_active_user, check_field_admin
 from app.crud import crud_schedule, crud_section
 from app.schemas.schedule import ScheduleCreate, ScheduleUpdate, ScheduleResponse
@@ -11,7 +12,7 @@ router = APIRouter()
 
 @router.get("/sections/{section_id}/schedules", response_model=List[ScheduleResponse])
 async def get_section_schedules(
-    section_id: int,
+    section_id: UUID,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
 ):
@@ -29,7 +30,7 @@ async def get_section_schedules(
 
 @router.post("/sections/{section_id}/schedules", response_model=ScheduleResponse, status_code=status.HTTP_201_CREATED)
 async def create_schedule(
-    section_id: int,
+    section_id: UUID,
     schedule_in: ScheduleCreate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
@@ -52,7 +53,7 @@ async def create_schedule(
 
 @router.put("/schedules/{schedule_id}", response_model=ScheduleResponse)
 async def update_schedule(
-    schedule_id: int,
+    schedule_id: UUID,
     schedule_in: ScheduleUpdate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
@@ -74,7 +75,7 @@ async def update_schedule(
 
 @router.delete("/schedules/{schedule_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_schedule(
-    schedule_id: int,
+    schedule_id: UUID,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
 ):

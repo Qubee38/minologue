@@ -1,6 +1,6 @@
 // ユーザー型
 export interface User {
-  id: number;
+  id: string;
   email: string;
   display_name: string | null;
   farm_name: string | null;
@@ -19,13 +19,13 @@ export interface AuthToken {
 
 // 圃場型
 export interface Field {
-  id: number;
+  id: string;
   name: string;
   location_text: string | null;
   latitude: number | null;
   longitude: number | null;
   memo: string | null;
-  owner_user_id: number;
+  owner_user_id: string;
   is_deleted: boolean;
   created_at: string;
   updated_at: string;
@@ -33,8 +33,8 @@ export interface Field {
 
 // 区画型
 export interface Section {
-  id: number;
-  field_id: number;
+  id: string;
+  field_id: string;
   name: string;
   crop_name: string;
   memo: string | null;
@@ -46,8 +46,8 @@ export interface Section {
 
 // スケジュール型
 export interface Schedule {
-  id: number;
-  section_id: number;
+  id: string;
+  section_id: string;
   month: number;
   work_content: string;
   created_at: string;
@@ -56,10 +56,10 @@ export interface Schedule {
 
 // 作業記録型
 export interface WorkRecord {
-  id: number;
-  field_id: number;
-  section_id: number | null;
-  recorder_user_id: number;
+  id: string;
+  field_id: string;
+  section_id: string | null;
+  recorder_user_id: string;
   record_target: 'section' | 'field';
   work_date: string;
   start_time: string;
@@ -77,8 +77,8 @@ export interface WorkRecord {
 
 // 写真型
 export interface Photo {
-  id: number;
-  work_record_id: number;
+  id: string;
+  work_record_id: string;
   file_path: string;
   file_size: number;
   display_order: number;
@@ -87,12 +87,12 @@ export interface Photo {
 
 // 共有型
 export interface Share {
-  id: number;
-  field_id: number;
-  shared_user_id: number;
+  id: string;
+  field_id: string;
+  shared_user_id: string;
   role: 'admin' | 'recorder';
   status: 'pending' | 'approved' | 'rejected';
-  invited_by_user_id: number;
+  invited_by_user_id: string;
   created_at: string;
   updated_at: string;
   approved_at: string | null;
@@ -100,7 +100,7 @@ export interface Share {
 
 // 天候型
 export interface Weather {
-  id: number;
+  id: string;
   date: string;
   location_text: string;
   latitude: number;

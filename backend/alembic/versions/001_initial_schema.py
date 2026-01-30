@@ -1,8 +1,8 @@
-"""Initial schema
+"""Initial schema with UUID
 
 Revision ID: 001
 Revises: 
-Create Date: 2025-01-28
+Create Date: 2025-01-29
 
 """
 from alembic import op
@@ -16,10 +16,13 @@ depends_on = None
 
 
 def upgrade() -> None:
+    # PostgreSQLのUUID拡張を有効化
+    op.execute('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"')
+    
     # users
     op.create_table(
         'users',
-        sa.Column('id', sa.Integer(), nullable=False),
+        sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False, server_default=sa.text('uuid_generate_v4()')),
         sa.Column('email', sa.String(255), nullable=False),
         sa.Column('password_hash', sa.String(255), nullable=False),
         sa.Column('display_name', sa.String(100), nullable=True),
@@ -36,8 +39,8 @@ def upgrade() -> None:
     # fields
     op.create_table(
         'fields',
-        sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column('owner_user_id', sa.Integer(), nullable=False),
+        sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False, server_default=sa.text('uuid_generate_v4()')),
+        sa.Column('owner_user_id', postgresql.UUID(as_uuid=True), nullable=False),
         sa.Column('name', sa.String(100), nullable=False),
         sa.Column('location_text', sa.Text(), nullable=True),
         sa.Column('latitude', sa.Float(), nullable=True),
@@ -54,8 +57,8 @@ def upgrade() -> None:
     # sections
     op.create_table(
         'sections',
-        sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column('field_id', sa.Integer(), nullable=False),
+        sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False, server_default=sa.text('uuid_generate_v4()')),
+        sa.Column('field_id', postgresql.UUID(as_uuid=True), nullable=False),
         sa.Column('name', sa.String(100), nullable=False),
         sa.Column('crop_name', sa.String(100), nullable=False),
         sa.Column('memo', sa.Text(), nullable=True),
@@ -71,8 +74,8 @@ def upgrade() -> None:
     # schedules
     op.create_table(
         'schedules',
-        sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column('section_id', sa.Integer(), nullable=False),
+        sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False, server_default=sa.text('uuid_generate_v4()')),
+        sa.Column('section_id', postgresql.UUID(as_uuid=True), nullable=False),
         sa.Column('month', sa.SmallInteger(), nullable=False),
         sa.Column('work_content', sa.String(200), nullable=False),
         sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
@@ -84,10 +87,10 @@ def upgrade() -> None:
     # work_records
     op.create_table(
         'work_records',
-        sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column('field_id', sa.Integer(), nullable=False),
-        sa.Column('section_id', sa.Integer(), nullable=True),
-        sa.Column('recorder_user_id', sa.Integer(), nullable=False),
+        sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False, server_default=sa.text('uuid_generate_v4()')),
+        sa.Column('field_id', postgresql.UUID(as_uuid=True), nullable=False),
+        sa.Column('section_id', postgresql.UUID(as_uuid=True), nullable=True),
+        sa.Column('recorder_user_id', postgresql.UUID(as_uuid=True), nullable=False),
         sa.Column('record_target', sa.String(20), nullable=False, server_default='section'),
         sa.Column('work_date', sa.Date(), nullable=False),
         sa.Column('start_time', sa.Time(), nullable=False),
@@ -113,8 +116,8 @@ def upgrade() -> None:
     # photos
     op.create_table(
         'photos',
-        sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column('work_record_id', sa.Integer(), nullable=False),
+        sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False, server_default=sa.text('uuid_generate_v4()')),
+        sa.Column('work_record_id', postgresql.UUID(as_uuid=True), nullable=False),
         sa.Column('file_path', sa.String(500), nullable=False),
         sa.Column('file_size', sa.Integer(), nullable=False),
         sa.Column('display_order', sa.SmallInteger(), nullable=False),
@@ -126,12 +129,12 @@ def upgrade() -> None:
     # shares
     op.create_table(
         'shares',
-        sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column('field_id', sa.Integer(), nullable=False),
-        sa.Column('shared_user_id', sa.Integer(), nullable=False),
+        sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False, server_default=sa.text('uuid_generate_v4()')),
+        sa.Column('field_id', postgresql.UUID(as_uuid=True), nullable=False),
+        sa.Column('shared_user_id', postgresql.UUID(as_uuid=True), nullable=False),
         sa.Column('role', sa.String(20), nullable=False, server_default='recorder'),
         sa.Column('status', sa.String(20), nullable=False, server_default='pending'),
-        sa.Column('invited_by_user_id', sa.Integer(), nullable=False),
+        sa.Column('invited_by_user_id', postgresql.UUID(as_uuid=True), nullable=False),
         sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
         sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
         sa.Column('approved_at', sa.DateTime(timezone=True), nullable=True),
@@ -145,7 +148,7 @@ def upgrade() -> None:
     # weather_data
     op.create_table(
         'weather_data',
-        sa.Column('id', sa.Integer(), nullable=False),
+        sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False, server_default=sa.text('uuid_generate_v4()')),
         sa.Column('date', sa.Date(), nullable=False),
         sa.Column('location_text', sa.String(200), nullable=False),
         sa.Column('latitude', sa.Float(), nullable=False),
@@ -171,3 +174,4 @@ def downgrade() -> None:
     op.drop_table('sections')
     op.drop_table('fields')
     op.drop_table('users')
+    op.execute('DROP EXTENSION IF EXISTS "uuid-ossp"')

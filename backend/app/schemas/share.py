@@ -1,29 +1,34 @@
-from pydantic import BaseModel, EmailStr, Field
-from typing import Optional, Literal
+from pydantic import BaseModel, EmailStr
 from datetime import datetime
+from uuid import UUID
 
 
 class ShareBase(BaseModel):
-    """共有基底スキーマ"""
-    role: Literal["admin", "recorder"] = Field(..., description="役割")
+    role: str = "recorder"
 
 
 class ShareCreate(BaseModel):
-    """共有作成（招待）"""
-    email: EmailStr = Field(..., description="招待するユーザーのメールアドレス")
-    role: Literal["admin", "recorder"] = Field(..., description="役割")
+    email: EmailStr
+    role: str = "recorder"
 
 
-class ShareResponse(ShareBase):
-    """共有レスポンス"""
-    id: int
-    field_id: int
-    shared_user_id: int
-    status: Literal["pending", "approved", "rejected"]
-    invited_by_user_id: int
+class ShareUpdate(BaseModel):
+    role: str | None = None
+    status: str | None = None
+
+
+class Share(ShareBase):
+    id: UUID
+    field_id: UUID
+    shared_user_id: UUID
+    status: str
+    invited_by_user_id: UUID
     created_at: datetime
     updated_at: datetime
-    approved_at: Optional[datetime] = None
-    
+    approved_at: datetime | None = None
+
     class Config:
         from_attributes = True
+
+
+ShareResponse = Share

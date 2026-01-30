@@ -8,12 +8,12 @@ import { WorkRecord } from '@/types';
 
 interface EditRecordFormProps {
   record: WorkRecord;
-  sectionId: number;
+  sectionId: string;
   onClose: () => void;
 }
 
 export function EditRecordForm({ record, sectionId, onClose }: EditRecordFormProps) {
-  const { deleteRecord, isDeleting } = useSectionRecords(sectionId);
+  const { updateRecord, deleteRecord, isUpdating, isDeleting } = useSectionRecords(sectionId);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   
   const [formData, setFormData] = useState({
@@ -42,13 +42,40 @@ export function EditRecordForm({ record, sectionId, onClose }: EditRecordFormPro
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert('編集機能は開発中です');
-    onClose();
+    
+    const updateData = {
+      work_type: formData.work_type,
+      start_time: formData.start_time + ':00',
+      end_time: formData.end_time + ':00',
+      quantity: formData.quantity ? parseFloat(formData.quantity) : undefined,
+      quantity_unit: formData.quantity_unit || undefined,
+      memo: formData.memo || undefined,
+    };
+
+    updateRecord(
+      { recordId: record.id, data: updateData },
+      {
+        onSuccess: () => {
+          onClose();
+        },
+        onError: (error) => {
+          console.error('更新エラー:', error);
+          alert('作業記録の更新に失敗しました');
+        },
+      }
+    );
   };
 
   const handleDelete = () => {
-    deleteRecord(record.id);
-    onClose();
+    deleteRecord(record.id, {
+      onSuccess: () => {
+        onClose();
+      },
+      onError: (error) => {
+        console.error('削除エラー:', error);
+        alert('作業記録の削除に失敗しました');
+      },
+    });
   };
 
   const needsQuantity = ['潅水', '施肥', '農薬散布', '収穫'].includes(formData.work_type);
@@ -164,7 +191,7 @@ export function EditRecordForm({ record, sectionId, onClose }: EditRecordFormPro
         </div>
       ) : (
         <div className="flex gap-2">
-          <Button type="submit" className="flex-1">
+          <Button type="submit" isLoading={isUpdating} className="flex-1">
             💾 保存
           </Button>
           <Button 

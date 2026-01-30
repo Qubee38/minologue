@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { recordsAPI, CreateWorkRecordData } from '@/lib/api/records';
+import { recordsAPI, CreateWorkRecordData, UpdateWorkRecordData } from '@/lib/api/records';
 
 export function useSectionRecords(
-  sectionId: number,
+  sectionId: string,
   params?: {
     start_date?: string;
     end_date?: string;
@@ -27,9 +27,18 @@ export function useSectionRecords(
     },
   });
 
+  // 作業記録更新
+  const updateRecordMutation = useMutation({
+    mutationFn: ({ recordId, data }: { recordId: string; data: UpdateWorkRecordData }) =>
+      recordsAPI.updateRecord(recordId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['records', sectionId] });
+    },
+  });
+
   // 作業記録削除
   const deleteRecordMutation = useMutation({
-    mutationFn: (recordId: number) => recordsAPI.deleteRecord(recordId),
+    mutationFn: (recordId: string) => recordsAPI.deleteRecord(recordId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['records', sectionId] });
     },
@@ -40,8 +49,10 @@ export function useSectionRecords(
     isLoading,
     error,
     createRecord: createRecordMutation.mutate,
+    updateRecord: updateRecordMutation.mutate,
     deleteRecord: deleteRecordMutation.mutate,
     isCreating: createRecordMutation.isPending,
+    isUpdating: updateRecordMutation.isPending,
     isDeleting: deleteRecordMutation.isPending,
   };
 }

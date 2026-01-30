@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 
 interface CreateRecordFormProps {
-  sectionId: number;
+  sectionId: string;
   workDate: string;
   defaultStartTime?: string;
   defaultWorkType?: string;

@@ -11,7 +11,7 @@ import { CreateSectionForm } from '@/components/features/sections/CreateSectionF
 export default function FieldDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const fieldId = parseInt(params.id as string);
+  const fieldId = params.id as string;
   const [showCreateForm, setShowCreateForm] = useState(false);
 
   const { data: field, isLoading, error } = useQuery({

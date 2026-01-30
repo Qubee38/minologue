@@ -38,41 +38,41 @@ export const fieldsAPI = {
   },
 
   // 圃場詳細取得
-  async getField(fieldId: number): Promise<Field> {
+  async getField(fieldId: string): Promise<Field> {
     const response = await axios.get<Field>(`/fields/${fieldId}`);
     return response.data;
   },
 
   // 圃場更新
-  async updateField(fieldId: number, data: UpdateFieldData): Promise<Field> {
+  async updateField(fieldId: string, data: UpdateFieldData): Promise<Field> {
     const response = await axios.put<Field>(`/fields/${fieldId}`, data);
     return response.data;
   },
 
   // 圃場削除
-  async deleteField(fieldId: number): Promise<void> {
+  async deleteField(fieldId: string): Promise<void> {
     await axios.delete(`/fields/${fieldId}`);
   },
 
   // 区画一覧取得
-  async getSections(fieldId: number): Promise<Section[]> {
+  async getSections(fieldId: string): Promise<Section[]> {
     const response = await axios.get<Section[]>(`/fields/${fieldId}/sections`);
     return response.data;
   },
 
   // 区画作成
-  async createSection(fieldId: number, data: CreateSectionData): Promise<Section> {
+  async createSection(fieldId: string, data: CreateSectionData): Promise<Section> {
     const response = await axios.post<Section>(`/fields/${fieldId}/sections`, data);
     return response.data;
   },
 
   // 区画削除
-  async deleteSection(sectionId: number): Promise<void> {
+  async deleteSection(sectionId: string): Promise<void> {
     await axios.delete(`/sections/${sectionId}`);
   },
 }
 
-export const getFieldById = async (id: number): Promise<Field> => {
+export const getFieldById = async (id: string): Promise<Field> => {
   const response = await axios.get(`/fields/${id}`);
   return response.data;
 };;

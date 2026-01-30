@@ -1,6 +1,7 @@
 from typing import List, Optional
 from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
+from uuid import UUID
 
 from app.crud.base import CRUDBase
 from app.models.field import Field
@@ -12,7 +13,7 @@ class CRUDField(CRUDBase[Field, FieldCreate, FieldUpdate]):
     async def get_user_fields(
         self, 
         db: AsyncSession, 
-        user_id: int
+        user_id: UUID
     ) -> List[Field]:
         """ユーザーの圃場一覧を取得（所有＋共有）"""
         # 所有している圃場を取得
@@ -47,7 +48,7 @@ class CRUDField(CRUDBase[Field, FieldCreate, FieldUpdate]):
         db: AsyncSession, 
         *, 
         obj_in: FieldCreate, 
-        owner_id: int
+        owner_id: UUID
     ) -> Field:
         """圃場を作成（所有者付き）"""
         db_obj = Field(

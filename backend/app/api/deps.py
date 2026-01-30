@@ -1,4 +1,5 @@
 from typing import Generator
+from uuid import UUID
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
@@ -34,17 +35,17 @@ async def get_current_user(
         payload = jwt.decode(
             token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
         )
-        user_id: str = payload.get("sub")
-        if user_id is None:
+        user_id_str: str = payload.get("sub")
+        if user_id_str is None:
             raise credentials_exception
         
-        # 文字列のuser_idを整数に変換
-        user_id_int = int(user_id)
+        # 文字列のUUIDをUUID型に変換
+        user_id = UUID(user_id_str)
         
-    except (JWTError, ValueError):
+    except (JWTError, ValueError) as e:
         raise credentials_exception
     
-    user = await crud_user.get(db, id=user_id_int)
+    user = await crud_user.get(db, id=user_id)
     if user is None:
         raise credentials_exception
     
@@ -65,7 +66,7 @@ async def get_current_active_user(
 
 async def check_field_access(
     db: AsyncSession,
-    field_id: int,
+    field_id: UUID,
     current_user: User
 ) -> Field:
     """圃場へのアクセス権限をチェック（閲覧権限）"""
@@ -95,7 +96,7 @@ async def check_field_access(
 
 async def check_field_admin(
     db: AsyncSession,
-    field_id: int,
+    field_id: UUID,
     current_user: User
 ) -> Field:
     """圃場への管理者権限をチェック"""

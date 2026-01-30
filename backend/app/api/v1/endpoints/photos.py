@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Form
 from sqlalchemy.ext.asyncio import AsyncSession
+from uuid import UUID
 from app.api.deps import get_db, get_current_active_user, check_field_access, check_field_admin
 from app.crud import crud_photo, crud_record
 from app.schemas.photo import PhotoResponse
@@ -11,7 +12,7 @@ router = APIRouter()
 
 @router.post("/records/{record_id}/photos", response_model=PhotoResponse, status_code=status.HTTP_201_CREATED)
 async def upload_photo(
-    record_id: int,
+    record_id: UUID,
     file: UploadFile = File(...),
     display_order: int = Form(..., ge=1, le=2),
     db: AsyncSession = Depends(get_db),
@@ -61,7 +62,7 @@ async def upload_photo(
 
 @router.delete("/photos/{photo_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_photo(
-    photo_id: int,
+    photo_id: UUID,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
 ):

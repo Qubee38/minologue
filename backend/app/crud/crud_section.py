@@ -1,6 +1,7 @@
 from typing import List
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from uuid import UUID
 from app.crud.base import CRUDBase
 from app.models.section import Section
 from app.schemas.section import SectionCreate, SectionUpdate
@@ -8,7 +9,7 @@ from app.schemas.section import SectionCreate, SectionUpdate
 
 class CRUDSection(CRUDBase[Section, SectionCreate, SectionUpdate]):
     async def get_field_sections(
-        self, db: AsyncSession, *, field_id: int
+        self, db: AsyncSession, *, field_id: UUID
     ) -> List[Section]:
         """圃場の区画一覧取得"""
         result = await db.execute(
@@ -19,7 +20,7 @@ class CRUDSection(CRUDBase[Section, SectionCreate, SectionUpdate]):
         return list(result.scalars().all())
 
     async def create_with_field(
-        self, db: AsyncSession, *, obj_in: SectionCreate, field_id: int
+        self, db: AsyncSession, *, obj_in: SectionCreate, field_id: UUID
     ) -> Section:
         """区画作成（圃場ID付き）"""
         db_obj = Section(
@@ -31,7 +32,7 @@ class CRUDSection(CRUDBase[Section, SectionCreate, SectionUpdate]):
         await db.refresh(db_obj)
         return db_obj
 
-    async def soft_delete(self, db: AsyncSession, *, id: int) -> Section:
+    async def soft_delete(self, db: AsyncSession, *, id: UUID) -> Section:
         """論理削除"""
         db_obj = await self.get(db, id=id)
         db_obj.is_deleted = True

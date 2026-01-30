@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.ext.asyncio import AsyncSession
+from uuid import UUID
 from app.api.deps import get_db, get_current_active_user, check_field_access
 from app.crud import crud_section
 from app.models.user import User
@@ -9,7 +10,7 @@ router = APIRouter()
 
 @router.get("/sections/{section_id}/dashboard")
 async def get_dashboard_data(
-    section_id: int,
+    section_id: UUID,
     year: int = Query(..., description="年"),
     month: int = Query(..., ge=1, le=12, description="月"),
     db: AsyncSession = Depends(get_db),

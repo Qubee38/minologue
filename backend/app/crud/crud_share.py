@@ -2,6 +2,7 @@ from typing import List, Optional
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import datetime
+from uuid import UUID
 from app.crud.base import CRUDBase
 from app.models.share import Share
 from app.schemas.share import ShareCreate, ShareBase
@@ -9,7 +10,7 @@ from app.schemas.share import ShareCreate, ShareBase
 
 class CRUDShare(CRUDBase[Share, ShareCreate, ShareBase]):
     async def get_field_shares(
-        self, db: AsyncSession, *, field_id: int
+        self, db: AsyncSession, *, field_id: UUID
     ) -> List[Share]:
         """圃場の共有メンバー一覧取得"""
         result = await db.execute(
@@ -18,7 +19,7 @@ class CRUDShare(CRUDBase[Share, ShareCreate, ShareBase]):
         return list(result.scalars().all())
 
     async def get_user_invitations(
-        self, db: AsyncSession, *, user_id: int
+        self, db: AsyncSession, *, user_id: UUID
     ) -> List[Share]:
         """ユーザーへの招待一覧取得"""
         result = await db.execute(
@@ -30,7 +31,7 @@ class CRUDShare(CRUDBase[Share, ShareCreate, ShareBase]):
         return list(result.scalars().all())
 
     async def get_by_field_and_user(
-        self, db: AsyncSession, *, field_id: int, user_id: int
+        self, db: AsyncSession, *, field_id: UUID, user_id: UUID
     ) -> Optional[Share]:
         """圃場とユーザーで共有取得"""
         result = await db.execute(
@@ -41,7 +42,7 @@ class CRUDShare(CRUDBase[Share, ShareCreate, ShareBase]):
         )
         return result.scalar_one_or_none()
 
-    async def approve(self, db: AsyncSession, *, share_id: int) -> Share:
+    async def approve(self, db: AsyncSession, *, share_id: UUID) -> Share:
         """招待承認"""
         db_obj = await self.get(db, id=share_id)
         db_obj.status = "approved"
@@ -50,7 +51,7 @@ class CRUDShare(CRUDBase[Share, ShareCreate, ShareBase]):
         await db.refresh(db_obj)
         return db_obj
 
-    async def reject(self, db: AsyncSession, *, share_id: int) -> Share:
+    async def reject(self, db: AsyncSession, *, share_id: UUID) -> Share:
         """招待拒否"""
         db_obj = await self.get(db, id=share_id)
         db_obj.status = "rejected"

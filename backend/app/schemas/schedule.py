@@ -1,31 +1,30 @@
-from pydantic import BaseModel, Field
-from typing import Optional
+from pydantic import BaseModel
 from datetime import datetime
+from uuid import UUID
 
 
 class ScheduleBase(BaseModel):
-    """年間スケジュール基底スキーマ"""
-    month: int = Field(..., ge=1, le=12, description="月（1-12）")
-    work_content: str = Field(..., max_length=200, description="作業内容")
+    month: int
+    work_content: str
 
 
 class ScheduleCreate(ScheduleBase):
-    """年間スケジュール作成"""
-    pass
+    section_id: UUID
 
 
 class ScheduleUpdate(BaseModel):
-    """年間スケジュール更新"""
-    month: Optional[int] = Field(None, ge=1, le=12)
-    work_content: Optional[str] = Field(None, max_length=200)
+    month: int | None = None
+    work_content: str | None = None
 
 
-class ScheduleResponse(ScheduleBase):
-    """年間スケジュールレスポンス"""
-    id: int
-    section_id: int
+class Schedule(ScheduleBase):
+    id: UUID
+    section_id: UUID
     created_at: datetime
     updated_at: datetime
-    
+
     class Config:
         from_attributes = True
+
+
+ScheduleResponse = Schedule

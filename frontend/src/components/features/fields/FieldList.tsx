@@ -28,7 +28,7 @@ export function FieldList() {
     );
   }
 
-  const handleDelete = (fieldId: number, fieldName: string) => {
+  const handleDelete = (fieldId: string, fieldName: string) => {
     if (window.confirm(`「${fieldName}」を削除しますか？`)) {
       deleteField(fieldId);
     }

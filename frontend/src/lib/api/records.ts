@@ -27,7 +27,7 @@ export interface UpdateWorkRecordData {
 export const recordsAPI = {
   // 区画の作業記録一覧取得
   async getSectionRecords(
-    sectionId: number,
+    sectionId: string,
     params?: {
       start_date?: string;
       end_date?: string;
@@ -45,7 +45,7 @@ export const recordsAPI = {
 
   // 作業記録作成（区画）
   async createSectionRecord(
-    sectionId: number,
+    sectionId: string,
     data: CreateWorkRecordData
   ): Promise<WorkRecord> {
     const response = await axios.post<WorkRecord>(
@@ -56,14 +56,14 @@ export const recordsAPI = {
   },
 
   // 作業記録詳細取得
-  async getRecord(recordId: number): Promise<WorkRecord> {
+  async getRecord(recordId: string): Promise<WorkRecord> {
     const response = await axios.get<WorkRecord>(`/records/${recordId}`);
     return response.data;
   },
 
   // 作業記録更新
   async updateRecord(
-    recordId: number,
+    recordId: string,
     data: UpdateWorkRecordData
   ): Promise<WorkRecord> {
     const response = await axios.put<WorkRecord>(
@@ -74,7 +74,7 @@ export const recordsAPI = {
   },
 
   // 作業記録削除
-  async deleteRecord(recordId: number): Promise<void> {
+  async deleteRecord(recordId: string): Promise<void> {
     await axios.delete(`/records/${recordId}`);
   },
 };

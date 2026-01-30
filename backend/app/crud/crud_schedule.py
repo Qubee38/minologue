@@ -1,6 +1,7 @@
 from typing import List
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from uuid import UUID
 from app.crud.base import CRUDBase
 from app.models.schedule import Schedule
 from app.schemas.schedule import ScheduleCreate, ScheduleUpdate
@@ -8,7 +9,7 @@ from app.schemas.schedule import ScheduleCreate, ScheduleUpdate
 
 class CRUDSchedule(CRUDBase[Schedule, ScheduleCreate, ScheduleUpdate]):
     async def get_section_schedules(
-        self, db: AsyncSession, *, section_id: int
+        self, db: AsyncSession, *, section_id: UUID
     ) -> List[Schedule]:
         """区画の年間スケジュール取得"""
         result = await db.execute(
@@ -19,7 +20,7 @@ class CRUDSchedule(CRUDBase[Schedule, ScheduleCreate, ScheduleUpdate]):
         return list(result.scalars().all())
 
     async def create_with_section(
-        self, db: AsyncSession, *, obj_in: ScheduleCreate, section_id: int
+        self, db: AsyncSession, *, obj_in: ScheduleCreate, section_id: UUID
     ) -> Schedule:
         """年間スケジュール作成（区画ID付き）"""
         db_obj = Schedule(

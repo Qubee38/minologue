@@ -1,40 +1,47 @@
 from pydantic import BaseModel, EmailStr
-from typing import Optional
 from datetime import datetime
+from uuid import UUID
 
 
 class UserBase(BaseModel):
-    """ユーザー基底スキーマ"""
     email: EmailStr
-    display_name: Optional[str] = None
-    farm_name: Optional[str] = None
+    display_name: str | None = None
+    farm_name: str | None = None
 
 
 class UserCreate(UserBase):
-    """ユーザー作成"""
     password: str
 
 
 class UserUpdate(BaseModel):
-    """ユーザー更新"""
-    display_name: Optional[str] = None
-    farm_name: Optional[str] = None
+    display_name: str | None = None
+    farm_name: str | None = None
 
 
-class UserResponse(UserBase):
-    """ユーザーレスポンス"""
-    id: int
+class User(UserBase):
+    id: UUID
     is_active: bool
     created_at: datetime
-    last_login_at: Optional[datetime] = None
-    
+    updated_at: datetime
+    last_login_at: datetime | None = None
+
     class Config:
         from_attributes = True
 
 
+class UserInDB(User):
+    password_hash: str
+
+
+# エイリアス（後方互換性）
+UserResponse = User
+
+
 class Token(BaseModel):
-    """認証トークン"""
     access_token: str
-    token_type: str
-    expires_in: int
-    user: UserResponse
+    token_type: str = "bearer"
+    user: UserResponse  # ユーザー情報を含める
+
+
+class TokenData(BaseModel):
+    user_id: UUID | None = None

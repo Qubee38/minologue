@@ -6,14 +6,14 @@ import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 
 interface SectionListProps {
-  fieldId: number;
+  fieldId: string;
 }
 
 export function SectionList({ fieldId }: SectionListProps) {
   const router = useRouter();
   const { sections, isLoading, deleteSection, isDeleting } = useSections(fieldId);
 
-  const handleDelete = (e: React.MouseEvent, id: number, name: string) => {
+  const handleDelete = (e: React.MouseEvent, id: string, name: string) => {
     e.stopPropagation();
     console.log('Delete button clicked:', id, name);
     if (confirm(`区画「${name}」を削除しますか？`)) {
@@ -21,7 +21,7 @@ export function SectionList({ fieldId }: SectionListProps) {
     }
   };
 
-  const handleSectionClick = (sectionId: number) => {
+  const handleSectionClick = (sectionId: string) => {
     console.log('Section clicked, navigating to:', `/sections/${sectionId}/records`);
     router.push(`/sections/${sectionId}/records`);
   };

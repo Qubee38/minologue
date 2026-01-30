@@ -1,19 +1,26 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from datetime import datetime
+from uuid import UUID
 
 
 class PhotoBase(BaseModel):
-    """写真基底スキーマ"""
-    display_order: int = Field(..., ge=1, le=2, description="表示順序（1 or 2）")
-
-
-class PhotoResponse(PhotoBase):
-    """写真レスポンス"""
-    id: int
-    work_record_id: int
     file_path: str
     file_size: int
+    display_order: int
+
+
+class PhotoCreate(PhotoBase):
+    work_record_id: UUID
+
+
+class Photo(PhotoBase):
+    id: UUID
+    work_record_id: UUID
     created_at: datetime
-    
+
     class Config:
         from_attributes = True
+
+
+# エイリアス（後方互換性）
+PhotoResponse = Photo

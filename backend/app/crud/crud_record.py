@@ -1,5 +1,6 @@
 from typing import List, Optional
 from datetime import date
+from uuid import UUID
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.crud.base import CRUDBase
@@ -12,7 +13,7 @@ class CRUDRecord(CRUDBase[WorkRecord, RecordCreate, RecordUpdate]):
         self,
         db: AsyncSession,
         *,
-        section_id: int,
+        section_id: UUID,
         start_date: Optional[date] = None,
         end_date: Optional[date] = None,
         work_type: Optional[str] = None,
@@ -40,7 +41,7 @@ class CRUDRecord(CRUDBase[WorkRecord, RecordCreate, RecordUpdate]):
         self,
         db: AsyncSession,
         *,
-        section_id: int,
+        section_id: UUID,
         start_date: Optional[date] = None,
         end_date: Optional[date] = None,
         work_type: Optional[str] = None
@@ -66,16 +67,15 @@ class CRUDRecord(CRUDBase[WorkRecord, RecordCreate, RecordUpdate]):
         db: AsyncSession,
         *,
         obj_in: RecordCreate,
-        section_id: int,
-        recorder_user_id: int
+        section_id: UUID,
+        field_id: UUID,  # 追加
+        recorder_user_id: UUID
     ) -> WorkRecord:
         """作業記録作成（区画ID付き）"""
-        # section_idからfield_idを取得する必要があるが、簡略化のため省略
-        # 実装時は section を取得して field_id を設定
         db_obj = WorkRecord(
-            **obj_in.dict(),
+            **obj_in.model_dump(),
             section_id=section_id,
-            field_id=1,  # TODO: 実際はsectionから取得
+            field_id=field_id,  # 追加
             recorder_user_id=recorder_user_id
         )
         db.add(db_obj)
@@ -83,7 +83,7 @@ class CRUDRecord(CRUDBase[WorkRecord, RecordCreate, RecordUpdate]):
         await db.refresh(db_obj)
         return db_obj
 
-    async def soft_delete(self, db: AsyncSession, *, id: int) -> WorkRecord:
+    async def soft_delete(self, db: AsyncSession, *, id: UUID) -> WorkRecord:
         """論理削除"""
         db_obj = await self.get(db, id=id)
         db_obj.is_deleted = True

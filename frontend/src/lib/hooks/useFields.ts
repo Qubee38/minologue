@@ -20,7 +20,7 @@ export function useFields() {
 
   // 圃場削除
   const deleteFieldMutation = useMutation({
-    mutationFn: (fieldId: number) => fieldsAPI.deleteField(fieldId),
+    mutationFn: (fieldId: string) => fieldsAPI.deleteField(fieldId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['fields'] });
     },
@@ -37,7 +37,7 @@ export function useFields() {
   };
 }
 
-export function useSections(fieldId: number) {
+export function useSections(fieldId: string) {
   const queryClient = useQueryClient();
 
   // 区画一覧取得
@@ -57,7 +57,7 @@ export function useSections(fieldId: number) {
 
   // 区画削除
   const deleteSectionMutation = useMutation({
-    mutationFn: (sectionId: number) => fieldsAPI.deleteSection(sectionId),
+    mutationFn: (sectionId: string) => fieldsAPI.deleteSection(sectionId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['sections', fieldId] });
     },
